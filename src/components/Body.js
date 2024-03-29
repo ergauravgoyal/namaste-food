@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import RestaurantCard from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 import "./Body.css";
-// import { resList } from "../utils/mockData";
+import { Link } from "react-router-dom";
 
 const Body = () => {
   const [resList, setResList] = useState([]);
   const [sortedList, setSortedList] = useState(resList);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [position, setPosition] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
+  const [geolocationFound, isGeoLocationFound] = useState(false);
   const sortTopRestaurents = () => {
     //The sort function does not create a new array, it mutates the old one. So you're rearranging the existing state, and then setting state with the same array. Since it's the same array, react thinks the state hasn't changed and skips rendering.
     const list = [...resList];
@@ -21,20 +27,52 @@ const Body = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (position.longitude !== null && !isLoading) {
+      fetchData(position);
+      setLoading(true);
+    }
+  }, [position, geolocationFound]);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      isGeoLocationFound(true);
+      navigator.geolocation.getCurrentPosition((position) => {
+        setPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        localStorage.setItem("longitude", position.coords.longitude);
+        localStorage.setItem("latitude", position.coords.latitude);
+      });
+    } else {
+      isGeoLocationFound(false);
+      console.log("Geolocation is not available");
+    }
   }, []);
 
-  const handleSearch = () => {};
-  const fetchData = async () => {
+  useEffect(() => {
+    if (searchText === "") {
+      setSortedList(resList);
+    }
+  }, [searchText]);
+
+  const handleSearch = () => {
+    console.log(sortedList);
+
+    const list = sortedList.filter(({ info }) =>
+      info.name.toLowerCase().includes(searchText)
+    );
+    if (list.length > 0) {
+      setSortedList(list);
+    }
+  };
+
+  const fetchData = async (position) => {
     try {
       const data = await fetch(
-        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=28.45970&lng=77.02820"
+        `https://www.swiggy.com/dapi/restaurants/list/v5?lat=${position.latitude}&lng=${position.longitude}`
       );
       const json = await data.json();
-      console.log(
-        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants
-      );
       setResList(
         json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
           ?.restaurants
@@ -57,7 +95,7 @@ const Body = () => {
             type="text"
             className="search-box"
             value={searchText}
-            onChange={(e) => setSearchText(e?.target?.value)}
+            onChange={(e) => setSearchText(e?.target?.value.toLowerCase())}
           />
           <button onClick={handleSearch}>Search </button>
         </div>
@@ -77,25 +115,21 @@ const Body = () => {
           <>
             {" "}
             {sortedList?.map(({ info }) => {
-              const {
-                id,
-                name,
-                cuisines,
-                sla,
-                avgRating,
-                cloudinaryImageId,
-                costForTwo,
-              } = info ? info : {};
+              const { id, name, cuisines, sla, avgRating, costForTwo } = info
+                ? info
+                : {};
+
               return (
-                <RestaurantCard
-                  key={id}
-                  resName={name}
-                  cuisine={cuisines.join(", ")}
-                  deliveryTime={sla.slaString}
-                  starRating={avgRating}
-                  cloudinaryImageId={cloudinaryImageId}
-                  costForTwo={costForTwo}
-                />
+                <Link to={`/restaurant/${id}`} key={id} className="res-card">
+                  <RestaurantCard
+                    resName={name}
+                    cuisine={cuisines.join(", ")}
+                    deliveryTime={sla.slaString}
+                    starRating={avgRating}
+                    costForTwo={costForTwo}
+                    {...info}
+                  />
+                </Link>
               );
             })}
           </>

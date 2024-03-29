@@ -14,8 +14,9 @@ const RestaurantCard = (restaurantData) => {
     cloudinaryImageId,
     costForTwo,
   } = restaurantData;
+
   return (
-    <div className="res-card" style={styleCard}>
+    <div style={styleCard}>
       <img
         className="res-logo"
         alt="rajasthani food"

@@ -1,0 +1,16 @@
+.menu-item-container {
+  margin: 0 20%;
+}
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.menu-item img {
+  width: 80px;
+}
+.icon-Veg::before {
+  content: "\E997";
+}

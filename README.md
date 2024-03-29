@@ -17,7 +17,7 @@
 
 ## Food Ordering App
 
-/**
+
  * Header
  *  - Logo
  *  - Nav Items
@@ -36,7 +36,18 @@
  *  - Links
  *  - Address
  *  - Contact Information
- */
+
+
+
+
+ # React Hooks
+   (Normal JS Utility Functions)
+   useState() - Superpowerful State Variables in React
+   useEffect()
+ # 2 types of Routing in web apps
+  - Client Side Routing
+  - Server Side Routing
+ 
 
 
 document.getElementsByClassName("lg:w-[30%]")[0].style.display="none";
