@@ -37,6 +37,20 @@
   height: 250px;
   text-decoration: none;
 }
+.shimmer-card {
+  background: #ddd
+    linear-gradient(to right, #f6f6f6 8%, #f0f0f0 18%, #f6f6f6 33%);
+  animation: shimmer 2.2s linear 0 infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: -1200px 0;
+  }
+  100% {
+    background-position: 1200px 0;
+  }
+}
+
 a.res-card,
 .shimmer-card {
   color: black;

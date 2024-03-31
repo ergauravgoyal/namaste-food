@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
+import { MENU_API_URL } from "../utils/constants";
 
-const useRestaurantMenu = async (resId, longitude, latitude) => {
+const useRestaurantMenu = (resId, longitude, latitude) => {
   const [resInfo, setResInfo] = useState(null);
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
-    const dynamicURL = `https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${latitude}&lng=${longitude}&restaurantId=${resId}`;
+    const dynamicURL = MENU_API_URL(resId, longitude, latitude);
     const data = await fetch(dynamicURL);
     const json = await data.json();
     setResInfo(json.data);
   };
+
   return resInfo;
 };
 

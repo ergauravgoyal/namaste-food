@@ -1,30 +1,18 @@
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
-import { CDN_URL, MENU_ITEM_CDN_URL } from "../utils/constants";
+import { CDN_URL, MENU_API_URL, MENU_ITEM_CDN_URL } from "../utils/constants";
 import "./RestaurentMenu.css";
 import { useParams } from "react-router-dom";
-import useRestaurantMenu from "../utils/useRestaurantMenu";
+import useFetch from "../utils/useFetch";
 
 // const MENU_ITEM_CDN_URL =
 //   "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/";
 const RestaurantMenu = () => {
   const { resId } = useParams();
-  const [resInfo, setResInfo] = useState(null);
-
-  useEffect(() => {
-    const longitude = localStorage.getItem("longitude");
-    const latitude = localStorage.getItem("longitude");
-    fetchMenu(longitude, latitude, resId);
-  }, []);
-
-  const fetchMenu = async (longitude, latitude, id) => {
-    const URL = `https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=28.45970&lng=77.02820&restaurantId=${resId}&catalog_qa=undefined&submitAction=ENTER`;
-    const dynamicURL = `https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${latitude}&lng=${longitude}&restaurantId=${id}`;
-    const data = await fetch(URL);
-    const json = await data.json();
-    console.log(json.data);
-    setResInfo(json.data);
-  };
+  const longitude = localStorage.getItem("longitude");
+  const latitude = localStorage.getItem("longitude");
+  const url = MENU_API_URL(resId, longitude, latitude);
+  const { data: resInfo, loading, error } = useFetch(url);
 
   const { name, cuisines, cloudinaryImageId, costForTwoMessage } = resInfo
     ?.cards[2]?.card?.card?.info
@@ -40,7 +28,7 @@ const RestaurantMenu = () => {
 
   return (
     <>
-      {resInfo === null ? (
+      {loading || resInfo == null ? (
         <Shimmer />
       ) : (
         <div className="menu">
