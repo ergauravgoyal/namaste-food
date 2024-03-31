@@ -30,11 +30,10 @@ const RestaurantMenu = () => {
     ? resInfo?.cards[2]?.card?.card?.info
     : {};
 
-  const { itemCards } = resInfo
-    ? resInfo?.cards[5]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card
-        ?.card
-    : {};
-  debugger;
+  const collection = resInfo?.cards
+    ?.map((card) => card.groupedCard)
+    ?.filter((value) => value !== undefined)[0]
+    ?.cardGroupMap.REGULAR.cards.filter((item) => item.card.card.itemCards);
 
   return (
     <>
@@ -49,35 +48,59 @@ const RestaurantMenu = () => {
           </p>
 
           <div className="menu-item-container">
-            {itemCards?.map((item) => {
-              debugger;
-              const { id, name, imageId, price, description } = item
-                ? item?.card?.info
-                : {};
-
+            {collection?.map((item) => {
+              const { itemCards, title } = item?.card.card;
               return (
-                <div key={id} className="menu-item">
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignContent: "space-between",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <span style={{ fontWeight: "700" }}>{name}</span>
-                      <span>
-                        {" "}
-                        &#8377;
-                        {price / 100}
-                      </span>
-                    </div>
-                    <div>
-                      <span style={{ color: "grey" }}>{description}</span>
-                    </div>
+                <div id={title}>
+                  <h3 className="menu-category">{title}</h3>
+                  <div>
+                    {itemCards?.map((item) => {
+                      const {
+                        id,
+                        name,
+                        imageId,
+                        price,
+                        defaultPrice,
+                        description,
+                      } = item ? item?.card?.info : {};
+
+                      return (
+                        <div key={id} className="menu-item">
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignContent: "space-between",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span style={{ fontWeight: "700" }}>{name}</span>
+                              <span>
+                                {" "}
+                                &#8377;
+                                {price / 100 || defaultPrice / 100}
+                              </span>
+                            </div>
+                            <div>
+                              <span style={{ color: "grey" }}>
+                                {description}
+                              </span>
+                            </div>
+                          </div>
+                          <img
+                            src={`${MENU_ITEM_CDN_URL}${imageId}`}
+                            alt={name}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
-                  <img src={`${MENU_ITEM_CDN_URL}${imageId}`} alt={name} />
                 </div>
               );
             })}

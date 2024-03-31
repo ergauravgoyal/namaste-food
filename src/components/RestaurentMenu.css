@@ -1,6 +1,10 @@
 .menu-item-container {
   margin: 0 20%;
 }
+.menu-category {
+  margin: 10px 0;
+  padding: 10px;
+}
 .menu-item {
   display: flex;
   justify-content: space-between;
