@@ -3,6 +3,7 @@ import Shimmer from "./Shimmer";
 import { CDN_URL, MENU_ITEM_CDN_URL } from "../utils/constants";
 import "./RestaurentMenu.css";
 import { useParams } from "react-router-dom";
+import useRestaurantMenu from "../utils/useRestaurantMenu";
 
 // const MENU_ITEM_CDN_URL =
 //   "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/";
@@ -33,7 +34,9 @@ const RestaurantMenu = () => {
   const collection = resInfo?.cards
     ?.map((card) => card.groupedCard)
     ?.filter((value) => value !== undefined)[0]
-    ?.cardGroupMap.REGULAR.cards.filter((item) => item.card.card.itemCards);
+    ?.cardGroupMap?.REGULAR?.cards?.filter(
+      (item) => item?.card?.card?.itemCards
+    );
 
   return (
     <>
@@ -49,7 +52,7 @@ const RestaurantMenu = () => {
 
           <div className="menu-item-container">
             {collection?.map((item) => {
-              const { itemCards, title } = item?.card.card;
+              const { itemCards, title } = item?.card?.card;
               return (
                 <div id={title}>
                   <h3 className="menu-category">{title}</h3>
