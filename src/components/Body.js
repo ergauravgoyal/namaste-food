@@ -4,6 +4,7 @@ import Shimmer from "./Shimmer";
 import "./Body.css";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import RadioDropdown from "./RadioDropdown";
 
 const Body = () => {
   const [resList, setResList] = useState([]);
@@ -90,66 +91,63 @@ const Body = () => {
   };
 
   const onlineStatus = useOnlineStatus();
+
+  if (onlineStatus === false)
+    return (
+      <h1>Looks like you are offline please check your internet connection</h1>
+    );
+
   return (
     <>
-      {onlineStatus ? (
-        <div className="body">
-          <div className="filter">
-            <div className="search">
-              <input
-                type="text"
-                className="search-box"
-                value={searchText}
-                onChange={(e) => setSearchText(e?.target?.value.toLowerCase())}
-              />
-              <button onClick={handleSearch}>Search </button>
-            </div>
-            <button className="filter-btn" onClick={() => sortTopRestaurents()}>
-              Sort Restautents by Rating
-            </button>
-            <button
-              className="filter-btn"
-              onClick={() => filterTopRestaurents()}
-            >
-              Filter Top Rated Restaurents
-            </button>
+      <div className="body">
+        <div className="filter">
+          <div className="search">
+            <input
+              type="text"
+              className="search-box"
+              value={searchText}
+              onChange={(e) => setSearchText(e?.target?.value.toLowerCase())}
+            />
+            <button onClick={handleSearch}>Search </button>
           </div>
-          <div className="restaurant-container">
-            {isLoading ? (
-              <>
-                <Shimmer />
-              </>
-            ) : (
-              <>
-                {" "}
-                {sortedList?.map(({ info }) => {
-                  const { id, name, cuisines, sla, avgRating, costForTwo } =
-                    info ? info : {};
-
-                  return (
-                    <Link
-                      to={`/restaurant/${id}`}
-                      key={id}
-                      className="res-card"
-                    >
-                      <RestaurantCard
-                        resName={name}
-                        cuisine={cuisines.join(", ")}
-                        deliveryTime={sla.slaString}
-                        starRating={avgRating}
-                        costForTwo={costForTwo}
-                        {...info}
-                      />
-                    </Link>
-                  );
-                })}
-              </>
-            )}
-          </div>
+          <button className="filter-btn" onClick={() => sortTopRestaurents()}>
+            Sort Restautents by Rating
+          </button>
+          <button className="filter-btn" onClick={() => filterTopRestaurents()}>
+            Filter Top Rated Restaurents
+          </button>
+          {/* <RadioDropdown /> */}
         </div>
-      ) : (
-        <h1>Please check your internet connection</h1>
-      )}
+        <div className="restaurant-container">
+          {isLoading ? (
+            <>
+              <Shimmer />
+            </>
+          ) : (
+            <>
+              {" "}
+              {sortedList?.map(({ info }) => {
+                const { id, name, cuisines, sla, avgRating, costForTwo } = info
+                  ? info
+                  : {};
+
+                return (
+                  <Link to={`/restaurant/${id}`} key={id} className="res-card">
+                    <RestaurantCard
+                      resName={name}
+                      cuisine={cuisines.join(", ")}
+                      deliveryTime={sla.slaString}
+                      starRating={avgRating}
+                      costForTwo={costForTwo}
+                      {...info}
+                    />
+                  </Link>
+                );
+              })}
+            </>
+          )}
+        </div>
+      </div>
     </>
   );
 };
