@@ -27,8 +27,12 @@ const Body = () => {
     const list = resList.filter((a) => a.info.avgRating > 4.5);
     setSortedList(list);
   };
+  useEffect(() => {
+    fetchData();
+  });
 
   useEffect(() => {
+    debugger;
     if (position.longitude !== null && !isLoading) {
       debugger;
       fetchData(position);
